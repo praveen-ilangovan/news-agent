@@ -35,10 +35,14 @@ def run(
         False, "--dry-run", help="Render the digest to a file instead of emailing."
     ),
     out: str = typer.Option("digest.html", help="Output path for --dry-run HTML."),
+    cache: bool = typer.Option(
+        False, "--cache/--no-cache", help="Use the fetch cache (off by default)."
+    ),
+    force: bool = typer.Option(False, "--force", help="Refetch and refresh the cache."),
 ) -> None:
     """Run the full pipeline once: fetch -> rank -> summarize -> email."""
     cfg = load_config(config)
-    items = fetch_all(cfg)
+    items = fetch_all(cfg, cache=cache, force=force)
     ranked = rank_items(cfg, items)
     provider = build_provider(cfg.llm)
     summarized = summarize_ranked(provider, ranked)
@@ -56,11 +60,16 @@ def run(
 
 
 @app.command()
-def fetch(config: str = "config.yaml", category: str | None = None) -> None:
+def fetch(
+    config: str = "config.yaml",
+    category: str | None = None,
+    cache: bool = typer.Option(True, "--cache/--no-cache", help="Use the fetch cache."),
+    force: bool = typer.Option(False, "--force", help="Refetch and refresh the cache."),
+) -> None:
     """Fetch all sources and print the raw items (no ranking yet)."""
     cfg = load_config(config)
     categories = [category] if category else None
-    items = fetch_all(cfg, categories)
+    items = fetch_all(cfg, categories, cache=cache, force=force)
 
     table = Table(title=f"Fetched {len(items)} items")
     table.add_column("category", style="cyan")
@@ -87,11 +96,16 @@ def fetch(config: str = "config.yaml", category: str | None = None) -> None:
 
 
 @app.command()
-def rank(config: str = "config.yaml", category: str | None = None) -> None:
+def rank(
+    config: str = "config.yaml",
+    category: str | None = None,
+    cache: bool = typer.Option(True, "--cache/--no-cache", help="Use the fetch cache."),
+    force: bool = typer.Option(False, "--force", help="Refetch and refresh the cache."),
+) -> None:
     """Fetch, rank and print the top-N per category (no summaries yet)."""
     cfg = load_config(config)
     categories = [category] if category else None
-    items = fetch_all(cfg, categories)
+    items = fetch_all(cfg, categories, cache=cache, force=force)
     ranked = rank_items(cfg, items)
 
     now = datetime.now(UTC)
@@ -123,11 +137,16 @@ def rank(config: str = "config.yaml", category: str | None = None) -> None:
 
 
 @app.command()
-def summarize(config: str = "config.yaml", category: str | None = None) -> None:
+def summarize(
+    config: str = "config.yaml",
+    category: str | None = None,
+    cache: bool = typer.Option(True, "--cache/--no-cache", help="Use the fetch cache."),
+    force: bool = typer.Option(False, "--force", help="Refetch and refresh the cache."),
+) -> None:
     """Fetch, rank and LLM-summarize the top-N per category, then print."""
     cfg = load_config(config)
     categories = [category] if category else None
-    items = fetch_all(cfg, categories)
+    items = fetch_all(cfg, categories, cache=cache, force=force)
     ranked = rank_items(cfg, items)
     provider = build_provider(cfg.llm)
     summarized = summarize_ranked(provider, ranked)

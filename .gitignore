@@ -18,5 +18,8 @@ htmlcov/
 # Generated digest preview (make preview / --dry-run)
 digest.html
 
+# Local fetch cache
+.cache/
+
 # OS
 .DS_Store

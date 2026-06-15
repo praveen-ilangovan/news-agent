@@ -21,7 +21,7 @@ _H2 = (
     "margin:28px 0 12px;font-size:13px;letter-spacing:.08em;text-transform:"
     "uppercase;color:#3b5bdb;border-bottom:1px solid #e5e7eb;padding-bottom:6px;"
 )
-_TITLE = "font-size:16px;font-weight:600;color:#1a1a1a;text-decoration:none;"
+_TITLE = "font-size:16px;font-weight:600;color:#2563eb;text-decoration:underline;"
 _META = "margin:2px 0 6px;color:#888;font-size:12px;"
 _SUMMARY = "margin:0 0 6px;font-size:14px;"
 _WHY = "margin:0;font-size:14px;color:#444;"
