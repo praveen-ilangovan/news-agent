@@ -20,6 +20,9 @@ class Item(BaseModel):
     source: str
     category: str
     published_at: datetime | None = None
+    # Plain-text feed description/summary, when the source provides one. Fed to
+    # the LLM so summaries are grounded in real text, not just the headline.
+    content: str | None = None
     # Engagement signal — only Hacker News provides this. None for RSS items.
     points: int | None = None
     # Computed by the ranking step (hotness for HN, recency decay for RSS).

@@ -41,6 +41,10 @@ fetch: ## Fetch all sources and print them (no ranking yet)
 rank: ## Fetch + rank + print the top-N per category
 	@poetry run news-agent rank
 
+.PHONY: summarize
+summarize: ## Fetch + rank + LLM-summarize the top-N per category
+	@poetry run news-agent summarize
+
 ##################
 #####  HELP  #####
 .PHONY: help

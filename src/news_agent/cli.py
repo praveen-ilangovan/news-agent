@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 
 # Project specific imports
 import typer
+from dotenv import load_dotenv
 from rich.console import Console
 from rich.table import Table
 
@@ -13,6 +14,7 @@ from .config import load_config
 from .fetch import fetch_all
 from .logger import get_logger
 from .rank import rank_items
+from .summarize import build_provider, summarize_ranked
 
 LOG = get_logger(__name__)
 
@@ -105,5 +107,30 @@ def rank(config: str = "config.yaml", category: str | None = None) -> None:
         console.print(table)
 
 
+@app.command()
+def summarize(config: str = "config.yaml", category: str | None = None) -> None:
+    """Fetch, rank and LLM-summarize the top-N per category, then print."""
+    cfg = load_config(config)
+    categories = [category] if category else None
+    items = fetch_all(cfg, categories)
+    ranked = rank_items(cfg, items)
+    provider = build_provider(cfg.llm)
+    summarized = summarize_ranked(provider, ranked)
+
+    console = Console()
+    for cat, top in summarized.items():
+        if categories is not None and cat not in categories:
+            continue
+        console.print(f"\n[bold underline]{cat}[/]")
+        for idx, item in enumerate(top, 1):
+            console.print(f"\n[bold]{idx}. {item.title}[/]  [dim]({item.source})[/]")
+            console.print(f"   [blue]{item.url}[/]")
+            if item.summary:
+                console.print(f"   {item.summary}")
+            if item.why:
+                console.print(f"   [italic]Why it matters:[/] {item.why}")
+
+
 def main() -> None:
+    load_dotenv()
     app()

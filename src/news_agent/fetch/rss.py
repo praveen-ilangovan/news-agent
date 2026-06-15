@@ -2,6 +2,8 @@
 
 # Builtin imports
 import calendar
+import html
+import re
 from datetime import UTC, datetime
 from typing import Any
 
@@ -18,6 +20,18 @@ from .constants import HTTP_TIMEOUT, MAX_ITEMS_PER_FEED, USER_AGENT
 
 # Sentinel for sorting items that have no parseable date (treated as oldest).
 _NO_DATE = datetime.min.replace(tzinfo=UTC)
+
+_TAG_RE = re.compile(r"<[^>]+>")
+_CONTENT_LIMIT = 600
+
+
+def _clean_html(text: str) -> str:
+    """Strip tags, unescape entities, collapse whitespace, truncate."""
+    stripped = _TAG_RE.sub(" ", text)
+    unescaped = html.unescape(stripped)
+    collapsed = re.sub(r"\s+", " ", unescaped).strip()
+    return collapsed[:_CONTENT_LIMIT]
+
 
 LOG = get_logger(__name__)
 
@@ -58,6 +72,8 @@ class RSSFetcher(Fetcher):
             link = entry.get("link")
             if not title or not link:
                 continue
+            raw_summary = entry.get("summary") or entry.get("description")
+            content = _clean_html(str(raw_summary)) if raw_summary else None
             items.append(
                 Item(
                     title=str(title).strip(),
@@ -65,6 +81,7 @@ class RSSFetcher(Fetcher):
                     source=self._source.name,
                     category=self._category,
                     published_at=_parse_struct_time(entry),
+                    content=content or None,
                 )
             )
         # Keep only the most recent N; undated items sort last but keep feed order.
