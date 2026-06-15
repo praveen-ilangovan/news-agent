@@ -12,6 +12,7 @@ from rich.table import Table
 from .config import load_config
 from .fetch import fetch_all
 from .logger import get_logger
+from .rank import rank_items
 
 LOG = get_logger(__name__)
 
@@ -66,6 +67,42 @@ def fetch(config: str = "config.yaml", category: str | None = None) -> None:
             item.title,
         )
     Console().print(table)
+
+
+@app.command()
+def rank(config: str = "config.yaml", category: str | None = None) -> None:
+    """Fetch, rank and print the top-N per category (no summaries yet)."""
+    cfg = load_config(config)
+    categories = [category] if category else None
+    items = fetch_all(cfg, categories)
+    ranked = rank_items(cfg, items)
+
+    now = datetime.now(UTC)
+    console = Console()
+    for cat, top in ranked.items():
+        if categories is not None and cat not in categories:
+            continue
+        table = Table(title=f"{cat} — top {len(top)}")
+        table.add_column("#", justify="right")
+        table.add_column("score", justify="right", style="yellow")
+        table.add_column("source", style="magenta")
+        table.add_column("pts", justify="right", style="green")
+        table.add_column("age", justify="right")
+        table.add_column("title")
+        for idx, item in enumerate(top, 1):
+            if item.published_at is not None:
+                age = f"{(now - item.published_at).total_seconds() / 3600:.0f}h"
+            else:
+                age = "-"
+            table.add_row(
+                str(idx),
+                f"{item.score:.3f}",
+                item.source,
+                str(item.points) if item.points is not None else "-",
+                age,
+                item.title,
+            )
+        console.print(table)
 
 
 def main() -> None:

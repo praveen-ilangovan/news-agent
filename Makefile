@@ -37,6 +37,10 @@ run: ## Run the digest pipeline once (honours config.yaml)
 fetch: ## Fetch all sources and print them (no ranking yet)
 	@poetry run news-agent fetch
 
+.PHONY: rank
+rank: ## Fetch + rank + print the top-N per category
+	@poetry run news-agent rank
+
 ##################
 #####  HELP  #####
 .PHONY: help

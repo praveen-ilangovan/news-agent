@@ -11,6 +11,12 @@ ranking:
   # RSS items have no engagement data, so they are scored on recency decay alone.
   # Larger half-life = older items stay competitive longer.
   recency_half_life_hours: 18
+  # HN hotness squash midpoint. Lower = HN stories with points compete harder
+  # against fresh RSS items in the per-category top-N.
+  hn_hotness_midpoint: 0.3
+  # At most this many items from any one source per category, so a prolific
+  # feed (e.g. Techmeme) can't monopolize the digest.
+  max_per_source: 2
 
 # --- LLM (summarization) ---
 # provider: "openai_compatible" works with Groq / OpenRouter / Gemini / Cerebras /

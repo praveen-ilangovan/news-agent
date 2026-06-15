@@ -18,7 +18,15 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class RankingConfig(BaseModel):
+    # RSS recency decay: score halves every `recency_half_life_hours`.
     recency_half_life_hours: float = 18.0
+    # HN hotness is squashed to [0, 1) via h / (h + midpoint); this is the
+    # hotness value that maps to 0.5, controlling HN-vs-RSS balance in top-N.
+    # Lower => engaged HN stories compete harder against fresh RSS items.
+    hn_hotness_midpoint: float = 0.3
+    # Diversity cap: at most this many items per source in a category's top-N,
+    # so one prolific feed can't monopolize the digest. Backfilled if needed.
+    max_per_source: int = 2
 
 
 class LLMConfig(BaseModel):
