@@ -15,5 +15,8 @@ htmlcov/
 .env
 *.local.yaml
 
+# Generated digest preview (make preview / --dry-run)
+digest.html
+
 # OS
 .DS_Store

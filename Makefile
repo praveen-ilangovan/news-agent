@@ -30,8 +30,12 @@ test-integration: ## Run integration tests (hit the network / live APIs)
 ##################
 #####  RUN   #####
 .PHONY: run
-run: ## Run the digest pipeline once (honours config.yaml)
+run: ## Run the full pipeline once and email the digest
 	@poetry run news-agent run
+
+.PHONY: preview
+preview: ## Run the pipeline but render the digest to digest.html (no email)
+	@poetry run news-agent run --dry-run
 
 .PHONY: fetch
 fetch: ## Fetch all sources and print them (no ranking yet)

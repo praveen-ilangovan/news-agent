@@ -2,6 +2,7 @@
 
 # Builtin imports
 from datetime import UTC, datetime
+from pathlib import Path
 
 # Project specific imports
 import typer
@@ -10,7 +11,8 @@ from rich.console import Console
 from rich.table import Table
 
 # Local imports
-from .config import load_config
+from .config import Settings, load_config
+from .delivery import deliver, render_digest
 from .fetch import fetch_all
 from .logger import get_logger
 from .rank import rank_items
@@ -27,17 +29,30 @@ def _root() -> None:
 
 
 @app.command()
-def run(config: str = "config.yaml") -> None:
-    """Run the digest pipeline once (fetch -> rank -> summarize -> email)."""
+def run(
+    config: str = "config.yaml",
+    dry_run: bool = typer.Option(
+        False, "--dry-run", help="Render the digest to a file instead of emailing."
+    ),
+    out: str = typer.Option("digest.html", help="Output path for --dry-run HTML."),
+) -> None:
+    """Run the full pipeline once: fetch -> rank -> summarize -> email."""
     cfg = load_config(config)
-    LOG.info(
-        "config loaded",
-        categories=list(cfg.categories),
-        top_n=cfg.top_n_per_category,
-        llm_provider=cfg.llm.provider,
-        llm_model=cfg.llm.model,
-    )
-    typer.echo("Scaffold stage — pipeline not implemented yet.")
+    items = fetch_all(cfg)
+    ranked = rank_items(cfg, items)
+    provider = build_provider(cfg.llm)
+    summarized = summarize_ranked(provider, ranked)
+
+    now = datetime.now(UTC)
+    if dry_run:
+        subject, html, text = render_digest(summarized, now)
+        Path(out).write_text(html, encoding="utf-8")
+        typer.echo(f"[dry-run] subject: {subject}")
+        typer.echo(f"[dry-run] wrote HTML digest to {out}")
+        return
+
+    deliver(cfg, Settings(), summarized, now)
+    typer.echo(f"Digest sent to {cfg.recipient_email}.")
 
 
 @app.command()
