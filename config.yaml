@@ -42,6 +42,23 @@ categories:
     - type: rss
       name: "Simon Willison"
       url: "https://simonwillison.net/atom/everything/"
+    - type: rss
+      name: "OpenAI News"
+      url: "https://openai.com/news/rss.xml"
+    - type: rss
+      name: "Google AI Blog"
+      url: "https://blog.google/technology/ai/rss/"
+    - type: rss
+      name: "The Verge (AI)"
+      url: "https://www.theverge.com/rss/ai-artificial-intelligence/index.xml"
+    - type: rss
+      name: "Ahead of AI (Raschka)"
+      url: "https://magazine.sebastianraschka.com/feed"
+    - type: rss
+      name: "Anthropic News"
+      # No official Anthropic RSS — mirror maintained by the Alan Turing
+      # Institute (updates lag ~1-2 weeks; fine as a lab primary source).
+      url: "https://raw.githubusercontent.com/alan-turing-institute/ai-rss-feeds/refs/heads/main/feeds/anthropic-news.xml"
     - type: hn
       name: "Hacker News (AI/LLM)"
       query: "AI OR LLM"

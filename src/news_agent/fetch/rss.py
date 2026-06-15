@@ -14,7 +14,10 @@ from ..config import RSSSource
 from ..logger import get_logger
 from ..models import Item
 from .abstracts import Fetcher
-from .constants import HTTP_TIMEOUT, USER_AGENT
+from .constants import HTTP_TIMEOUT, MAX_ITEMS_PER_FEED, USER_AGENT
+
+# Sentinel for sorting items that have no parseable date (treated as oldest).
+_NO_DATE = datetime.min.replace(tzinfo=UTC)
 
 LOG = get_logger(__name__)
 
@@ -64,5 +67,8 @@ class RSSFetcher(Fetcher):
                     published_at=_parse_struct_time(entry),
                 )
             )
+        # Keep only the most recent N; undated items sort last but keep feed order.
+        items.sort(key=lambda i: i.published_at or _NO_DATE, reverse=True)
+        items = items[:MAX_ITEMS_PER_FEED]
         self._log.info("fetched", source=self._source.name, count=len(items))
         return items
