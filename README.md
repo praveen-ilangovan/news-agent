@@ -46,6 +46,12 @@ llm:
   api_key_env: GROQ_API_KEY            # which env var holds the key
 ```
 
+## Design decisions
+
+Notable decisions and their rationale are recorded as ADRs in
+[`docs/decisions/`](./docs/decisions/) — e.g. why summarization uses JSON via
+constrained decoding ([0001](./docs/decisions/0001-llm-output-format.md)).
+
 ## Secrets
 
 Never committed. Provided via environment variables (GitHub Actions secrets in

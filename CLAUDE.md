@@ -47,6 +47,12 @@ make run        # run the pipeline once
 
 Pre-commit (ruff + mypy) runs on commit. Fix failures — do not `--no-verify`.
 
+## Design decisions
+
+Record notable decisions (and their rationale) as numbered ADRs in
+`docs/decisions/`. See its `README.md` for the format. Add a new ADR rather
+than rewriting an old one when a decision changes.
+
 ## Gotchas
 
 - Gmail SMTP needs an **app password**, not the account password.
