@@ -14,8 +14,27 @@ agent is shipped and running daily. Revisit after a few days of live digests
 
 - [ ] **Cross-source clustering (iteration 2).** When the same story appears in
   multiple feeds, that agreement is the strongest "hot" signal. Embed titles,
-  merge above a similarity threshold, boost the merged item by source count. The
-  `dedupe()` function in `rank.py` is the seam this slots into.
+  merge above a similarity threshold, boost the merged item by source count.
+  `dedupe()` in `rank.py` is the seam — right location and signature
+  (`list[Item] -> list[Item]`, pure) — but it is **not a pure drop-in**. Three
+  things the upgrade must address:
+  1. **Clustering is a fold, not a filter.** Today's `dedupe` *selects* an
+     existing item (keep-max). Clustering *synthesizes* a representative from
+     several items. A filter can't always be refactored into a fold without
+     touching the call site — this is the crux, not an ordering nit.
+  2. **Score must run after the merge** (or as a post-merge boost pass).
+     `rank_items` currently does `score → dedupe → sort`; boost-by-source-count
+     needs the source count to exist before scoring, so reorder to
+     `cluster → score(with cluster_size) → sort`.
+  3. **`Item` must carry source multiplicity.** Today an item has a single
+     `source`; a merged representative needs to express "how many / which
+     sources agreed" (e.g. a `sources` list, length 1 for un-merged items).
+  Note (judgment call): #3 — the *representation* of source multiplicity — is
+  the one piece that's safe to add ahead of time without guessing the
+  merge/boost math (#1, #2 stay correctly unbuilt). Deferred here on strict
+  YAGNI, since `source` is read in three places (diversity cap, rendering,
+  fetch table), so it's a small-but-real change, not literally ripple-free.
+  Blast radius when done: `rank.py` + `models.py` only.
 
 - [ ] **Per-category relevance filter.** Off-topic items leak in because category
   is decided by source, not content (see
