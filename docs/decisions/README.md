@@ -24,3 +24,4 @@ rather than deleting history.
 | # | Title | Status |
 |---|-------|--------|
 | [0001](0001-llm-output-format.md) | LLM summarization output format (JSON via constrained decoding) | Accepted |
+| [0002](0002-source-based-categorization.md) | Source-based categorization (accept off-topic leakage) | Accepted |
