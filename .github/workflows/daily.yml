@@ -1,0 +1,34 @@
+name: Daily digest
+
+on:
+  schedule:
+    # 06:00 UTC = 07:00 BST (British Summer Time).
+    # GitHub cron is fixed UTC and does NOT follow DST, so in winter (GMT)
+    # this fires at 06:00 local. Change to "0 7 * * *" for a strict 7am in GMT.
+    # Scheduled runs can also be delayed 10-30 min under GitHub load.
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: ".python-version"
+
+      - name: Install Poetry
+        run: pipx install poetry
+
+      - name: Install dependencies
+        run: poetry install --only main --no-interaction
+
+      - name: Run digest
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+        run: poetry run news-agent run

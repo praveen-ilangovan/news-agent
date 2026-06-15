@@ -62,3 +62,15 @@ CI, a local `.env` for development):
 | `GROQ_API_KEY` (or whatever `llm.api_key_env` names) | LLM API key |
 | `SMTP_USER` | Gmail address |
 | `SMTP_PASS` | Gmail **app password** (not the account password) |
+
+## Deployment (GitHub Actions)
+
+`.github/workflows/daily.yml` runs the pipeline on a schedule:
+
+- `cron: "0 6 * * *"` → 06:00 UTC = **07:00 BST** (07:00 → 06:00 local in GMT
+  winter, since GitHub cron is fixed UTC and ignores DST). Scheduled runs may be
+  delayed 10–30 min.
+- `workflow_dispatch` lets you trigger a run manually from the Actions tab.
+
+Add the three secrets under **Settings → Secrets and variables → Actions**:
+`GROQ_API_KEY`, `SMTP_USER`, `SMTP_PASS`.
