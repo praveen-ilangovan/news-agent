@@ -1,0 +1,61 @@
+# news-agent configuration — fully user-editable.
+#   Adding a source = one line.   Adding a category = one block.
+# Secrets (API keys, SMTP credentials) are NOT here — they come from env vars.
+
+# --- Delivery ---
+recipient_email: "praveen.ilangovan@gmail.com"
+top_n_per_category: 5
+
+# --- Ranking knobs ---
+ranking:
+  # RSS items have no engagement data, so they are scored on recency decay alone.
+  # Larger half-life = older items stay competitive longer.
+  recency_half_life_hours: 18
+
+# --- LLM (summarization) ---
+# provider: "openai_compatible" works with Groq / OpenRouter / Gemini / Cerebras /
+#           Together / local Ollama — just set base_url, model and api_key_env.
+#           "anthropic" uses the Anthropic SDK (set model to a Claude model).
+llm:
+  provider: openai_compatible
+  model: llama-3.3-70b-versatile
+  base_url: https://api.groq.com/openai/v1
+  api_key_env: GROQ_API_KEY
+
+# --- Categories ---
+# Each source has a `type` (rss | hn) and the relevant fields:
+#   rss -> url
+#   hn  -> query  (keyword search; empty string = HN front-page-ish results)
+categories:
+  ai:
+    - type: rss
+      name: "Import AI"
+      url: "https://importai.substack.com/feed"
+    - type: rss
+      name: "The Batch"
+      url: "https://www.deeplearning.ai/the-batch/feed/"
+    - type: rss
+      name: "Simon Willison"
+      url: "https://simonwillison.net/atom/everything/"
+    - type: hn
+      name: "Hacker News (AI/LLM)"
+      query: "AI OR LLM"
+
+  tech:
+    - type: rss
+      name: "Techmeme"
+      url: "https://www.techmeme.com/feed.xml"
+    - type: rss
+      name: "Ars Technica"
+      url: "https://feeds.arstechnica.com/arstechnica/index"
+    - type: hn
+      name: "Hacker News (general)"
+      query: ""
+
+  crypto:
+    - type: rss
+      name: "CoinDesk"
+      url: "https://www.coindesk.com/arc/outboundfeeds/rss/"
+    - type: rss
+      name: "Decrypt"
+      url: "https://decrypt.co/feed"
