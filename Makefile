@@ -22,11 +22,20 @@ unittest: ## Run unit tests
 	@echo "🚀 Running unit tests"
 	@poetry run pytest tests/unit
 
+.PHONY: test-integration
+test-integration: ## Run integration tests (hit the network / live APIs)
+	@echo "🚀 Running integration tests"
+	@poetry run pytest tests/integration -v
+
 ##################
 #####  RUN   #####
 .PHONY: run
 run: ## Run the digest pipeline once (honours config.yaml)
 	@poetry run news-agent run
+
+.PHONY: fetch
+fetch: ## Fetch all sources and print them (no ranking yet)
+	@poetry run news-agent fetch
 
 ##################
 #####  HELP  #####

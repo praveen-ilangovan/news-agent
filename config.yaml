@@ -33,7 +33,12 @@ categories:
       url: "https://importai.substack.com/feed"
     - type: rss
       name: "The Batch"
-      url: "https://www.deeplearning.ai/the-batch/feed/"
+      # The Batch has no official RSS — this is a kill-the-newsletter.com bridge
+      # (email newsletter -> Atom). Third-party; replace if it ever goes stale.
+      url: "https://kill-the-newsletter.com/feeds/jc8116b7aauska20.xml"
+    - type: rss
+      name: "MIT Tech Review (AI)"
+      url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/"
     - type: rss
       name: "Simon Willison"
       url: "https://simonwillison.net/atom/everything/"
