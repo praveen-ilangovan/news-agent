@@ -162,9 +162,12 @@ To run it yourself: **fork the repo**, then:
 
 [`.github/workflows/daily.yml`](./.github/workflows/daily.yml) then runs it:
 
-- `cron: "0 6 * * *"` → 06:00 UTC = **07:00 BST**. GitHub cron is fixed UTC and
-  ignores DST, so in GMT winter it fires at 06:00 local; change to `0 7 * * *`
-  for a strict 7am in winter. Scheduled runs may be delayed 10–30 min.
+- `cron: "17 6 * * *"` → 06:17 UTC = **07:17 BST**. The `:17` minute is
+  intentional — top-of-hour crons are congested and often delayed/dropped on
+  GitHub, so an off-peak minute is more reliable. GitHub cron is fixed UTC and
+  ignores DST, so in GMT winter it fires at 06:17 local; bump the hour for a
+  strict ~7am in winter. Scheduled runs may still be delayed; the first
+  scheduled run after adding a workflow is also commonly skipped.
 - `workflow_dispatch` lets you trigger a run manually from the Actions tab to
   test end-to-end.
 
