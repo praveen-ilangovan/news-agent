@@ -25,3 +25,4 @@ rather than deleting history.
 |---|-------|--------|
 | [0001](0001-llm-output-format.md) | LLM summarization output format (JSON via constrained decoding) | Accepted |
 | [0002](0002-source-based-categorization.md) | Source-based categorization (accept off-topic leakage) | Accepted |
+| [0003](0003-external-trigger-over-github-cron.md) | External scheduler over GitHub cron | Accepted |

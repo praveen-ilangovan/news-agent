@@ -1,15 +1,10 @@
 name: Daily digest
 
 on:
-  schedule:
-    # 06:17 UTC = 07:17 BST (British Summer Time).
-    # The :17 minute is deliberate — top-of-hour (:00) crons are the most
-    # congested on GitHub and get heavily delayed or silently dropped under
-    # load; an off-peak minute is far more reliable.
-    # GitHub cron is fixed UTC and does NOT follow DST, so in winter (GMT)
-    # this fires at 06:17 local. Bump the hour to 7 for a strict ~7am in GMT.
-    # Scheduled runs can still be delayed; allow some slack.
-    - cron: "17 6 * * *"
+  # Triggered ONLY by an external scheduler (cron-job.org) that POSTs to the
+  # workflow_dispatch REST API each morning. GitHub's own `schedule:` cron was
+  # removed: it silently dropped every scheduled run (zero `schedule` events
+  # ever fired) while manual dispatch always worked. See docs/decisions/0003.
   workflow_dispatch: {}
 
 jobs:
