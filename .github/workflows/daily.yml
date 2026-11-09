@@ -16,7 +16,10 @@ jobs:
 
       - uses: actions/setup-python@v5
         with:
-          python-version-file: ".python-version"
+          # Track the latest 3.12 patch rather than the exact local pin in
+          # .python-version: when ubuntu-latest moved to 26.04, setup-python
+          # had no 3.12.12 build for it and every run failed at this step.
+          python-version: "3.12"
 
       - name: Install Poetry
         run: pipx install poetry
